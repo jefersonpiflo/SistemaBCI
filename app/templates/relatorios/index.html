@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Relatórios</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3>Relatório de Imóveis</h3>
+                        <p>Análise detalhada dos imóveis cadastrados, incluindo distribuição por tipo, 
+                           valores médios por bairro e estatísticas gerais.</p>
+                        <a href="{{ url_for('relatorios.imoveis') }}" class="btn btn-primary">
+                            Gerar Relatório
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3>Relatório de Vistorias</h3>
+                        <p>Análise das vistorias realizadas, incluindo distribuição por status, 
+                           evolução temporal e detalhamento por fiscal.</p>
+                        <a href="{{ url_for('relatorios.vistorias') }}" class="btn btn-primary">
+                            Gerar Relatório
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Exportar Dados</h3>
+                        <p>Exporte os dados completos para análise em outras ferramentas.</p>
+                        <div class="btn-group">
+                            <a href="{{ url_for('relatorios.exportar', tipo='imoveis') }}" 
+                               class="btn btn-success">
+                                Exportar Imóveis
+                            </a>
+                            <a href="{{ url_for('relatorios.exportar', tipo='vistorias') }}" 
+                               class="btn btn-success">
+                                Exportar Vistorias
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

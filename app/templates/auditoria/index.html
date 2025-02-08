@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Logs de Auditoria - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Logs de Auditoria</h2>
+    </div>
+    <div class="card-body">
+        <form method="GET" class="mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Data Início</label>
+                    <input type="date" name="data_inicio" class="form-control" value="{{ data_inicio }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Data Fim</label>
+                    <input type="date" name="data_fim" class="form-control" value="{{ data_fim }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Módulo</label>
+                    <select name="modulo" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="imovel" {% if modulo == 'imovel' %}selected{% endif %}>Imóvel</option>
+                        <option value="vistoria" {% if modulo == 'vistoria' %}selected{% endif %}>Vistoria</option>
+                        <option value="iptu" {% if modulo == 'iptu' %}selected{% endif %}>IPTU</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Ação</label>
+                    <select name="acao" class="form-select">
+                        <option value="">Todas</option>
+                        <option value="criar" {% if acao == 'criar' %}selected{% endif %}>Criar</option>
+                        <option value="editar" {% if acao == 'editar' %}selected{% endif %}>Editar</option>
+                        <option value="excluir" {% if acao == 'excluir' %}selected{% endif %}>Excluir</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Usuário</th>
+                        <th>Módulo</th>
+                        <th>Ação</th>
+                        <th>IP</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs.items %}
+                    <tr>
+                        <td>{{ log.data_hora.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                        <td>{{ log.usuario.nome }}</td>
+                        <td>{{ log.modulo|title }}</td>
+                        <td>{{ log.acao|title }}</td>
+                        <td>{{ log.ip_address }}</td>
+                        <td>
+                            <a href="{{ url_for('auditoria.detalhes', id=log.id) }}" 
+                               class="btn btn-sm btn-info">Detalhes</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {{ render_pagination(logs) }}
+    </div>
+</div>
+{% endblock %} 

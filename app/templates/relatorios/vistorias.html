@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório de Vistorias - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Relatório de Vistorias</h2>
+        <a href="{{ url_for('relatorios.exportar', tipo='vistorias') }}" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Exportar Excel
+        </a>
+    </div>
+    <div class="card-body">
+        <!-- Filtros -->
+        <form method="POST" class="mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Data Início</label>
+                    <input type="date" name="data_inicio" class="form-control" 
+                           value="{{ periodo.inicio.strftime('%Y-%m-%d') if periodo else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Data Fim</label>
+                    <input type="date" name="data_fim" class="form-control"
+                           value="{{ periodo.fim.strftime('%Y-%m-%d') if periodo else '' }}" required>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Resumo -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3>Total de Vistorias: {{ dados.total_vistorias }}</h3>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Distribuição por Status</h4>
+                        <img src="data:image/png;base64,{{ dados.grafico_status }}" 
+                             class="img-fluid" alt="Gráfico de status">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Evolução Temporal</h4>
+                        {% if dados.grafico_evolucao %}
+                        <img src="data:image/png;base64,{{ dados.grafico_evolucao }}" 
+                             class="img-fluid" alt="Gráfico de evolução">
+                        {% else %}
+                        <p class="text-muted">Não há dados suficientes para gerar o gráfico de evolução.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Dados -->
+        <div class="card">
+            <div class="card-body">
+                <h4>Detalhamento</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="tabelaVistorias">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Imóvel</th>
+                                <th>Fiscal</th>
+                                <th>Status</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vistoria in dados.dados_tabela %}
+                            <tr>
+                                <td>{{ vistoria.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>{{ vistoria.imovel }}</td>
+                                <td>{{ vistoria.fiscal }}</td>
+                                <td>{{ vistoria.status|title }}</td>
+                                <td>{{ vistoria.tipo|title }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    $('#tabelaVistorias').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json'
+        },
+        pageLength: 25,
+        order: [[0, 'desc']]
+    });
+});
+</script>
+{% endblock %} 

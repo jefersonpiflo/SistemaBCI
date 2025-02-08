@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Imóvel{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-edit me-2"></i>Editar Imóvel - Inscrição: {{ imovel.inscricao }}
+        </h6>
+        <a href="{{ url_for('iptu.index') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('iptu.atualizar_imovel', imovel_id=imovel.id) }}" method="POST" class="needs-validation" novalidate>
+            <!-- Informações Básicas -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informações Básicas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="inscricao" class="form-label">Inscrição Municipal</label>
+                            <input type="text" class="form-control" id="inscricao" name="inscricao" 
+                                   value="{{ imovel.inscricao }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe a inscrição municipal.
+                            </div>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="proprietario" class="form-label">Proprietário</label>
+                            <input type="text" class="form-control" id="proprietario" name="proprietario" 
+                                   value="{{ imovel.proprietario }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o nome do proprietário.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Endereço -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Endereço</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="endereco" class="form-label">Logradouro</label>
+                            <input type="text" class="form-control" id="endereco" name="endereco" 
+                                   value="{{ imovel.endereco }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o endereço.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="bairro" class="form-label">Bairro</label>
+                            <input type="text" class="form-control" id="bairro" name="bairro" 
+                                   value="{{ imovel.bairro }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o bairro.
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="cep" class="form-label">CEP</label>
+                            <input type="text" class="form-control" id="cep" name="cep" 
+                                   value="{{ imovel.cep }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o CEP.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Características do Imóvel -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-home me-2"></i>Características do Imóvel</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="area_terreno" class="form-label">Área do Terreno (m²)</label>
+                            <input type="number" step="0.01" class="form-control" id="area_terreno" 
+                                   name="area_terreno" value="{{ imovel.area_terreno }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe a área do terreno.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="area_construida" class="form-label">Área Construída (m²)</label>
+                            <input type="number" step="0.01" class="form-control" id="area_construida" 
+                                   name="area_construida" value="{{ imovel.area_construida }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe a área construída.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="valor_venal" class="form-label">Valor Venal (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor_venal" 
+                                   name="valor_venal" value="{{ imovel.valor_venal }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o valor venal.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="tipo_imovel" class="form-label">Tipo do Imóvel</label>
+                            <select class="form-select" id="tipo_imovel" name="tipo_imovel" required>
+                                <option value="">Selecione...</option>
+                                <option value="residencial" {% if imovel.tipo_imovel == 'residencial' %}selected{% endif %}>
+                                    Residencial
+                                </option>
+                                <option value="comercial" {% if imovel.tipo_imovel == 'comercial' %}selected{% endif %}>
+                                    Comercial
+                                </option>
+                                <option value="industrial" {% if imovel.tipo_imovel == 'industrial' %}selected{% endif %}>
+                                    Industrial
+                                </option>
+                                <option value="terreno" {% if imovel.tipo_imovel == 'terreno' %}selected{% endif %}>
+                                    Terreno
+                                </option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor, selecione o tipo do imóvel.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Histórico -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-history me-2"></i>Histórico</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-0">
+                                <strong>Data de Cadastro:</strong> 
+                                {{ imovel.data_cadastro.strftime('%d/%m/%Y %H:%M') }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-0">
+                                <strong>Última Atualização:</strong> 
+                                {{ imovel.data_atualizacao.strftime('%d/%m/%Y %H:%M') if imovel.data_atualizacao else 'Não atualizado' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Salvar Alterações
+                </button>
+                <a href="{{ url_for('iptu.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Validação do formulário
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Máscara para CEP
+document.getElementById('cep').addEventListener('input', function (e) {
+    var x = e.target.value.replace(/\D/g, '').match(/(\d{0,5})(\d{0,3})/);
+    e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2];
+});
+
+// Formatação de valores monetários
+document.getElementById('valor_venal').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    value = (value/100).toFixed(2);
+    e.target.value = value;
+});
+</script>
+{% endblock %} 

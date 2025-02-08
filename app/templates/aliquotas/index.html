@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Alíquotas - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Alíquotas</h2>
+        <a href="{{ url_for('aliquotas.nova') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nova Alíquota
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Tipo de Imóvel</th>
+                        <th>Padrão</th>
+                        <th>Valor (%)</th>
+                        <th>Vigência</th>
+                        <th>Observação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aliquota in aliquotas %}
+                    <tr>
+                        <td>{{ aliquota.tipo_imovel|title }}</td>
+                        <td>{{ aliquota.padrao_construcao|title if aliquota.padrao_construcao else '-' }}</td>
+                        <td>{{ "%.2f"|format(aliquota.valor) }}%</td>
+                        <td>
+                            {{ aliquota.data_inicio.strftime('%d/%m/%Y') }} - 
+                            {{ aliquota.data_fim.strftime('%d/%m/%Y') if aliquota.data_fim else 'Atual' }}
+                        </td>
+                        <td>{{ aliquota.observacao or '-' }}</td>
+                        <td>
+                            <a href="{{ url_for('aliquotas.editar', id=aliquota.id) }}" 
+                               class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

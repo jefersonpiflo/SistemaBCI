@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Visualização do Imóvel - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Detalhes do Imóvel</h2>
+        <div>
+            <a href="{{ url_for('documentos.gerar_bci', imovel_id=imovel.id) }}" 
+               class="btn btn-success">
+                <i class="fas fa-file-pdf"></i> Gerar BCI
+            </a>
+            <a href="{{ url_for('imovel.editar', id=imovel.id) }}" 
+               class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Dados do Imóvel</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="40%">Inscrição Imobiliária:</th>
+                        <td>{{ imovel.inscricao_imobiliaria }}</td>
+                    </tr>
+                    <tr>
+                        <th>Endereço:</th>
+                        <td>{{ imovel.logradouro }}, {{ imovel.numero }}</td>
+                    </tr>
+                    <tr>
+                        <th>Bairro:</th>
+                        <td>{{ imovel.bairro }}</td>
+                    </tr>
+                    <tr>
+                        <th>CEP:</th>
+                        <td>{{ imovel.cep }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tipo do Imóvel:</th>
+                        <td>{{ imovel.tipo_imovel|title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Área do Terreno:</th>
+                        <td>{{ imovel.area_terreno }} m²</td>
+                    </tr>
+                    <tr>
+                        <th>Área Construída:</th>
+                        <td>{{ imovel.area_construida }} m²</td>
+                    </tr>
+                    <tr>
+                        <th>Valor Venal:</th>
+                        <td>R$ {{ "%.2f"|format(imovel.valor_venal) }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <h4>Características</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="40%">Padrão Construção:</th>
+                        <td>{{ imovel.padrao_construcao|title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tipo Construção:</th>
+                        <td>{{ imovel.tipo_construcao|title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado Conservação:</th>
+                        <td>{{ imovel.estado_conservacao|title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Situação:</th>
+                        <td>{{ imovel.situacao }}</td>
+                    </tr>
+                </table>
+
+                <h4 class="mt-4">Dados do Proprietário</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="40%">Nome:</th>
+                        <td>{{ imovel.proprietario_nome }}</td>
+                    </tr>
+                    <tr>
+                        <th>CPF:</th>
+                        <td>{{ imovel.proprietario_cpf }}</td>
+                    </tr>
+                    <tr>
+                        <th>E-mail:</th>
+                        <td>{{ imovel.proprietario_email or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Telefone:</th>
+                        <td>{{ imovel.proprietario_telefone or '-' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

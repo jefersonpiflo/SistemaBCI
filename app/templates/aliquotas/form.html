@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ 'Editar' if aliquota else 'Nova' }} Alíquota - BCI
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{{ 'Editar' if aliquota else 'Nova' }} Alíquota</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Imóvel</label>
+                        <select name="tipo_imovel" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            <option value="residencial" 
+                                    {% if aliquota and aliquota.tipo_imovel == 'residencial' %}selected{% endif %}>
+                                Residencial
+                            </option>
+                            <option value="comercial"
+                                    {% if aliquota and aliquota.tipo_imovel == 'comercial' %}selected{% endif %}>
+                                Comercial
+                            </option>
+                            <option value="industrial"
+                                    {% if aliquota and aliquota.tipo_imovel == 'industrial' %}selected{% endif %}>
+                                Industrial
+                            </option>
+                            <option value="terreno"
+                                    {% if aliquota and aliquota.tipo_imovel == 'terreno' %}selected{% endif %}>
+                                Terreno
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Padrão de Construção</label>
+                        <select name="padrao_construcao" class="form-select">
+                            <option value="">Não se aplica</option>
+                            <option value="baixo"
+                                    {% if aliquota and aliquota.padrao_construcao == 'baixo' %}selected{% endif %}>
+                                Baixo
+                            </option>
+                            <option value="normal"
+                                    {% if aliquota and aliquota.padrao_construcao == 'normal' %}selected{% endif %}>
+                                Normal
+                            </option>
+                            <option value="alto"
+                                    {% if aliquota and aliquota.padrao_construcao == 'alto' %}selected{% endif %}>
+                                Alto
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Valor (%)</label>
+                        <input type="number" name="valor" class="form-control" 
+                               step="0.01" min="0" max="100" required
+                               value="{{ "%.2f"|format(aliquota.valor) if aliquota else '1.00' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Data Início</label>
+                        <input type="date" name="data_inicio" class="form-control" required
+                               value="{{ aliquota.data_inicio.strftime('%Y-%m-%d') if aliquota else '' }}">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Data Fim</label>
+                        <input type="date" name="data_fim" class="form-control"
+                               value="{{ aliquota.data_fim.strftime('%Y-%m-%d') if aliquota and aliquota.data_fim else '' }}">
+                        <small class="text-muted">Deixe em branco para vigência indeterminada</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Observação</label>
+                <textarea name="observacao" class="form-control" rows="3">{{ aliquota.observacao if aliquota else '' }}</textarea>
+            </div>
+
+            <div class="text-end">
+                <a href="{{ url_for('aliquotas.index') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

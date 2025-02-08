@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Calendário de Vistorias - BCI{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
+<style>
+    #calendario { height: 800px; }
+    .fc-event { cursor: pointer; }
+    .prioridade-alta { border-left: 4px solid #dc3545 !important; }
+    .prioridade-urgente { background-color: #dc3545 !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Calendário de Vistorias</h2>
+        <a href="{{ url_for('agendamento.novo') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nova Vistoria
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <select id="filtroFiscal" class="form-select">
+                    <option value="">Todos os Fiscais</option>
+                    {% for fiscal in fiscais %}
+                    <option value="{{ fiscal.id }}">{{ fiscal.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="filtroTipo" class="form-select">
+                    <option value="">Todos os Tipos</option>
+                    <option value="regular">Regular</option>
+                    <option value="denuncia">Denúncia</option>
+                    <option value="obra">Obra</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="calendario"></div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes -->
+<div class="modal fade" id="modalDetalhes" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes da Vistoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detalhesVistoria"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/pt-br.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendario');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'pt-br',
+        initialView: 'timeGridWeek',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        slotMinTime: '07:00:00',
+        slotMaxTime: '18:00:00',
+        allDaySlot: false,
+        slotDuration: '01:00:00',
+        eventClick: function(info) {
+            const evento = info.event;
+            const props = evento.extendedProps;
+            
+            document.getElementById('detalhesVistoria').innerHTML = `
+                <p><strong>Fiscal:</strong> ${props.fiscal}</p>
+                <p><strong>Tipo:</strong> ${props.tipo}</p>
+                <p><strong>Prioridade:</strong> ${props.prioridade}</p>
+                <p><strong>Status:</strong> ${evento.status}</p>
+            `;
+            
+            new bootstrap.Modal(document.getElementById('modalDetalhes')).show();
+        },
+        events: '/agendamentos/calendario',
+        eventDidMount: function(info) {
+            if (info.event.extendedProps.prioridade === 'alta') {
+                info.el.classList.add('prioridade-alta');
+            }
+            if (info.event.extendedProps.prioridade === 'urgente') {
+                info.el.classList.add('prioridade-urgente');
+            }
+        }
+    });
+    
+    calendar.render();
+    
+    // Filtros
+    document.getElementById('filtroFiscal').addEventListener('change', function(e) {
+        calendar.refetchEvents();
+    });
+    
+    document.getElementById('filtroTipo').addEventListener('change', function(e) {
+        calendar.refetchEvents();
+    });
+});
+</script>
+{% endblock %} 

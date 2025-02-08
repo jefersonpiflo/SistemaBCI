@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Análise Comparativa - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Análise Comparativa</h2>
+        <div class="btn-group">
+            <a href="{{ url_for('relatorios.exportar', tipo='comparativo', formato='pdf') }}" 
+               class="btn btn-success">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+            <a href="{{ url_for('relatorios.exportar', tipo='comparativo', formato='excel') }}" 
+               class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="{{ url_for('relatorios.exportar', tipo='comparativo', formato='csv') }}" 
+               class="btn btn-success">
+                <i class="fas fa-file-csv"></i> CSV
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Formulário de Seleção de Períodos -->
+        <form method="POST" class="mb-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Período Atual</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Data Início</label>
+                            <input type="date" name="data_inicio_atual" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data Fim</label>
+                            <input type="date" name="data_fim_atual" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4>Período Anterior</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Data Início</label>
+                            <input type="date" name="data_inicio_anterior" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data Fim</label>
+                            <input type="date" name="data_fim_anterior" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary">Gerar Comparativo</button>
+            </div>
+        </form>
+
+        {% if comparativo %}
+        <!-- Indicadores de Variação -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>Variação do Valor Médio</h5>
+                        <h3 class="{% if comparativo.variacao_valor_medio > 0 %}text-success
+                                   {% else %}text-danger{% endif %}">
+                            {{ "%.1f"|format(comparativo.variacao_valor_medio) }}%
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>Variação da Área Média</h5>
+                        <h3 class="{% if comparativo.variacao_area_media > 0 %}text-success
+                                   {% else %}text-danger{% endif %}">
+                            {{ "%.1f"|format(comparativo.variacao_area_media) }}%
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>Variação do Valor/m²</h5>
+                        <h3 class="{% if comparativo.variacao_valor_m2 > 0 %}text-success
+                                   {% else %}text-danger{% endif %}">
+                            {{ "%.1f"|format(comparativo.variacao_valor_m2) }}%
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Indicadores de Desempenho (KPIs)</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Indicador</th>
+                                        <th>Período Anterior</th>
+                                        <th>Período Atual</th>
+                                        <th>Variação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Densidade Cadastral</td>
+                                        <td>{{ "%.2f"|format(kpis_anterior.densidade_cadastral) }}</td>
+                                        <td>{{ "%.2f"|format(kpis_atual.densidade_cadastral) }}</td>
+                                        <td class="{% if kpis_atual.densidade_cadastral > kpis_anterior.densidade_cadastral %}
+                                                   text-success{% else %}text-danger{% endif %}">
+                                            {{ "%.1f"|format((kpis_atual.densidade_cadastral - 
+                                               kpis_anterior.densidade_cadastral) / 
+                                               kpis_anterior.densidade_cadastral * 100) }}%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Valor Médio/m²</td>
+                                        <td>R$ {{ "%.2f"|format(kpis_anterior.valor_medio_m2) }}</td>
+                                        <td>R$ {{ "%.2f"|format(kpis_atual.valor_medio_m2) }}</td>
+                                        <td class="{% if kpis_atual.valor_medio_m2 > kpis_anterior.valor_medio_m2 %}
+                                                   text-success{% else %}text-danger{% endif %}">
+                                            {{ "%.1f"|format((kpis_atual.valor_medio_m2 - 
+                                               kpis_anterior.valor_medio_m2) / 
+                                               kpis_anterior.valor_medio_m2 * 100) }}%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Taxa de Atualização</td>
+                                        <td>{{ "%.1f"|format(kpis_anterior.taxa_atualizacao) }}%</td>
+                                        <td>{{ "%.1f"|format(kpis_atual.taxa_atualizacao) }}%</td>
+                                        <td class="{% if kpis_atual.taxa_atualizacao > kpis_anterior.taxa_atualizacao %}
+                                                   text-success{% else %}text-danger{% endif %}">
+                                            {{ "%.1f"|format(kpis_atual.taxa_atualizacao - 
+                                               kpis_anterior.taxa_atualizacao) }}%
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos Comparativos -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Distribuição de Valores</h4>
+                        <div id="graficoBoxplot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Evolução por Tipo de Imóvel</h4>
+                        <div id="graficoEvolucaoTipo"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+{% if comparativo %}
+// Gráfico Boxplot
+const dadosBoxplot = {
+    anterior: {
+        valores: {{ dados_anterior.dados_tabela|map(attribute='valor')|list|tojson }},
+        nome: 'Período Anterior'
+    },
+    atual: {
+        valores: {{ dados_atual.dados_tabela|map(attribute='valor')|list|tojson }},
+        nome: 'Período Atual'
+    }
+};
+
+Plotly.newPlot('graficoBoxplot', [{
+    type: 'box',
+    y: dadosBoxplot.anterior.valores,
+    name: dadosBoxplot.anterior.nome,
+    boxpoints: 'outliers'
+}, {
+    type: 'box',
+    y: dadosBoxplot.atual.valores,
+    name: dadosBoxplot.atual.nome,
+    boxpoints: 'outliers'
+}], {
+    title: 'Distribuição dos Valores',
+    yaxis: {title: 'Valor (R$)'}
+});
+
+// Gráfico de Evolução por Tipo
+const dadosEvolucao = {
+    tipos: {{ dados_atual.dados_tabela|map(attribute='tipo')|unique|list|tojson }},
+    anterior: {{ dados_anterior.dados_tabela|groupby('tipo')|map('length')|list|tojson }},
+    atual: {{ dados_atual.dados_tabela|groupby('tipo')|map('length')|list|tojson }}
+};
+
+Plotly.newPlot('graficoEvolucaoTipo', [{
+    x: dadosEvolucao.tipos,
+    y: dadosEvolucao.anterior,
+    name: 'Período Anterior',
+    type: 'bar'
+}, {
+    x: dadosEvolucao.tipos,
+    y: dadosEvolucao.atual,
+    name: 'Período Atual',
+    type: 'bar'
+}], {
+    barmode: 'group',
+    title: 'Quantidade por Tipo de Imóvel',
+    xaxis: {title: 'Tipo'},
+    yaxis: {title: 'Quantidade'}
+});
+{% endif %}
+</script>
+{% endblock %} 

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Boleto IPTU - BCI{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>IPTU {{ ano_exercicio }}</h2>
+        <button onclick="window.print()" class="btn btn-primary">Imprimir</button>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h3>Prefeitura Municipal</h3>
+                    <h4>Documento de Arrecadação Municipal - IPTU {{ ano_exercicio }}</h4>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Dados do Imóvel</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Inscrição Imobiliária:</th>
+                            <td>{{ imovel.inscricao_imobiliaria }}</td>
+                        </tr>
+                        <tr>
+                            <th>Endereço:</th>
+                            <td>{{ imovel.logradouro }}, {{ imovel.numero }}</td>
+                        </tr>
+                        <tr>
+                            <th>Bairro:</th>
+                            <td>{{ imovel.bairro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Área Construída:</th>
+                            <td>{{ imovel.area_construida }} m²</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h5>Contribuinte</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Nome:</th>
+                            <td>{{ imovel.proprietario_nome }}</td>
+                        </tr>
+                        <tr>
+                            <th>CPF:</th>
+                            <td>{{ imovel.proprietario_cpf }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5>Detalhamento</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Valor Venal</th>
+                            <th>Alíquota</th>
+                            <th>Valor IPTU</th>
+                            <th>Vencimento</th>
+                        </tr>
+                        <tr>
+                            <td>R$ {{ "%.2f"|format(imovel.valor_venal) }}</td>
+                            <td>{{ "%.1f"|format(aliquota * 100) }}%</td>
+                            <td>R$ {{ "%.2f"|format(valor_iptu) }}</td>
+                            <td>{{ data_vencimento.strftime('%d/%m/%Y') }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="border p-3">
+                        <h5>Código de Barras</h5>
+                        <div class="text-center">
+                            <!-- Aqui você pode adicionar uma biblioteca para gerar código de barras -->
+                            <div class="bg-light p-3">
+                                <code>{{ codigo_barras }}</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style media="print">
+    .btn { display: none; }
+    @page { margin: 2cm; }
+</style>
+{% endblock %} 

@@ -1,0 +1,22 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <!-- Fundo circular -->
+    <circle cx="60" cy="60" r="58" fill="#2c3e50"/>
+    
+    <!-- Prédio principal -->
+    <rect x="35" y="40" width="50" height="60" fill="#ecf0f1"/>
+    
+    <!-- Telhado -->
+    <path d="M30 40 L60 15 L90 40 Z" fill="#3498db"/>
+    
+    <!-- Janelas -->
+    <rect x="42" y="50" width="12" height="12" fill="#2c3e50"/>
+    <rect x="66" y="50" width="12" height="12" fill="#2c3e50"/>
+    <rect x="42" y="70" width="12" height="12" fill="#2c3e50"/>
+    <rect x="66" y="70" width="12" height="12" fill="#2c3e50"/>
+    
+    <!-- Porta -->
+    <rect x="52" y="82" width="16" height="18" fill="#2c3e50"/>
+    
+    <!-- Texto BCI -->
+    <text x="60" y="110" font-family="Arial" font-size="14" fill="#ecf0f1" text-anchor="middle" font-weight="bold">BCI</text>
+</svg> 

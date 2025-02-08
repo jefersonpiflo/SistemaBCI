@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}IPTU{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Lista de Imóveis</h6>
+        <a href="{{ url_for('iptu.novo_imovel') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Novo Imóvel
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Inscrição</th>
+                        <th>Tipo</th>
+                        <th>Endereço</th>
+                        <th>Área (m²)</th>
+                        <th>Valor Venal</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for imovel in imoveis %}
+                    <tr>
+                        <td>{{ imovel.inscricao }}</td>
+                        <td>
+                            <span class="badge bg-{{ {
+                                'residencial': 'primary',
+                                'comercial': 'success',
+                                'industrial': 'warning',
+                                'terreno': 'info'
+                            }[imovel.tipo_imovel] }}">
+                                {{ imovel.tipo_imovel|title }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ imovel.endereco }}
+                            <small class="d-block text-muted">{{ imovel.bairro }}</small>
+                        </td>
+                        <td>{{ "%.2f"|format(imovel.area_terreno or 0) }}</td>
+                        <td>R$ {{ "%.2f"|format(imovel.valor_venal or 0) }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url_for('iptu.editar_imovel', imovel_id=imovel.id) }}" 
+                                   class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('iptu.calculo', imovel_id=imovel.id) }}" 
+                                   class="btn btn-sm btn-outline-success" title="Calcular IPTU">
+                                    <i class="fas fa-calculator"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-info" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#detalhesModal{{ imovel.id }}" 
+                                        title="Detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <!-- Modal de Detalhes -->
+                            <div class="modal fade" id="detalhesModal{{ imovel.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Detalhes do Imóvel</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <dl class="row">
+                                                <dt class="col-sm-4">Inscrição</dt>
+                                                <dd class="col-sm-8">{{ imovel.inscricao }}</dd>
+
+                                                <dt class="col-sm-4">Proprietário</dt>
+                                                <dd class="col-sm-8">{{ imovel.proprietario }}</dd>
+
+                                                <dt class="col-sm-4">Endereço</dt>
+                                                <dd class="col-sm-8">{{ imovel.endereco }}</dd>
+
+                                                <dt class="col-sm-4">Bairro</dt>
+                                                <dd class="col-sm-8">{{ imovel.bairro }}</dd>
+
+                                                <dt class="col-sm-4">CEP</dt>
+                                                <dd class="col-sm-8">{{ imovel.cep }}</dd>
+
+                                                <dt class="col-sm-4">Área Terreno</dt>
+                                                <dd class="col-sm-8">{{ "%.2f"|format(imovel.area_terreno or 0) }} m²</dd>
+
+                                                <dt class="col-sm-4">Área Construída</dt>
+                                                <dd class="col-sm-8">{{ "%.2f"|format(imovel.area_construida or 0) }} m²</dd>
+
+                                                <dt class="col-sm-4">Valor Venal</dt>
+                                                <dd class="col-sm-8">R$ {{ "%.2f"|format(imovel.valor_venal or 0) }}</dd>
+
+                                                <dt class="col-sm-4">Cadastro</dt>
+                                                <dd class="col-sm-8">{{ imovel.data_cadastro.strftime('%d/%m/%Y') }}</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json'
+            }
+        });
+    });
+</script>
+{% endblock %} 

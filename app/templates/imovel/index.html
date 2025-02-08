@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Imóveis - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Imóveis</h2>
+        <div>
+            <a href="{{ url_for('imovel.busca_avancada') }}" class="btn btn-info me-2">
+                <i class="fas fa-search"></i> Busca Avançada
+            </a>
+            <a href="{{ url_for('imovel.novo') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Novo Imóvel
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped" id="tabelaImoveis">
+                <thead>
+                    <tr>
+                        <th>Inscrição</th>
+                        <th>Tipo</th>
+                        <th>Endereço</th>
+                        <th>Área (m²)</th>
+                        <th>Valor Venal</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for imovel in imoveis %}
+                    <tr>
+                        <td>{{ imovel.inscricao_imobiliaria }}</td>
+                        <td>{{ imovel.tipo_imovel|title }}</td>
+                        <td>
+                            {{ imovel.logradouro }}, {{ imovel.numero }}
+                            {% if imovel.complemento %}- {{ imovel.complemento }}{% endif %}
+                            <br>
+                            {{ imovel.bairro }} - {{ imovel.cidade }}/{{ imovel.estado }}
+                        </td>
+                        <td>{{ "%.2f"|format(imovel.area_terreno) }}</td>
+                        <td>R$ {{ "%.2f"|format(imovel.valor_venal) }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url_for('imovel.editar', id=imovel.id) }}" 
+                                   class="btn btn-sm btn-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('iptu.calculo', imovel_id=imovel.id) }}" 
+                                   class="btn btn-sm btn-success" title="Calcular IPTU">
+                                    <i class="fas fa-calculator"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    $('#tabelaImoveis').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json'
+        },
+        pageLength: 25
+    });
+});
+</script>
+{% endblock %} 

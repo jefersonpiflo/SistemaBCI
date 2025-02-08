@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Busca Avançada de Imóveis</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Inscrição Imobiliária</label>
+                        <input type="text" name="inscricao" class="form-control" value="{{ filtros.inscricao if filtros else '' }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Imóvel</label>
+                        <select name="tipo" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="residencial" {% if filtros and filtros.tipo == 'residencial' %}selected{% endif %}>Residencial</option>
+                            <option value="comercial" {% if filtros and filtros.tipo == 'comercial' %}selected{% endif %}>Comercial</option>
+                            <option value="industrial" {% if filtros and filtros.tipo == 'industrial' %}selected{% endif %}>Industrial</option>
+                            <option value="terreno" {% if filtros and filtros.tipo == 'terreno' %}selected{% endif %}>Terreno</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Bairro</label>
+                        <input type="text" name="bairro" class="form-control" value="{{ filtros.bairro if filtros else '' }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Logradouro</label>
+                        <input type="text" name="logradouro" class="form-control" value="{{ filtros.logradouro if filtros else '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Área Mínima (m²)</label>
+                        <input type="number" name="area_min" class="form-control" value="{{ filtros.area_min if filtros else '' }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Área Máxima (m²)</label>
+                        <input type="number" name="area_max" class="form-control" value="{{ filtros.area_max if filtros else '' }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Valor Venal Mínimo</label>
+                        <input type="number" name="valor_min" class="form-control" value="{{ filtros.valor_min if filtros else '' }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Valor Venal Máximo</label>
+                        <input type="number" name="valor_max" class="form-control" value="{{ filtros.valor_max if filtros else '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </form>
+
+        {% if imoveis is defined %}
+        <hr>
+        <div class="table-responsive mt-4">
+            <table class="table table-striped" id="tabelaImoveis">
+                <thead>
+                    <tr>
+                        <th>Inscrição</th>
+                        <th>Tipo</th>
+                        <th>Endereço</th>
+                        <th>Área (m²)</th>
+                        <th>Valor Venal</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for imovel in imoveis %}
+                    <tr>
+                        <td>{{ imovel.inscricao_imobiliaria }}</td>
+                        <td>{{ imovel.tipo_imovel|title }}</td>
+                        <td>
+                            {{ imovel.logradouro }}, {{ imovel.numero }}
+                            {% if imovel.complemento %}- {{ imovel.complemento }}{% endif %}
+                            <br>
+                            {{ imovel.bairro }} - {{ imovel.cidade }}/{{ imovel.estado }}
+                        </td>
+                        <td>{{ "%.2f"|format(imovel.area_terreno) }}</td>
+                        <td>R$ {{ "%.2f"|format(imovel.valor_venal) }}</td>
+                        <td>
+                            <a href="{{ url_for('imovel.visualizar', id=imovel.id) }}" 
+                               class="btn btn-sm btn-info" title="Visualizar">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('imovel.editar', id=imovel.id) }}" 
+                               class="btn btn-sm btn-primary" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ url_for('iptu.calculo', imovel_id=imovel.id) }}" 
+                               class="btn btn-sm btn-success" title="Calcular IPTU">
+                                <i class="fas fa-calculator"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    if ($('#tabelaImoveis tbody tr').length > 0) {
+        $('#tabelaImoveis').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json'
+            },
+            pageLength: 25
+        });
+    }
+});
+</script>
+{% endblock %} 

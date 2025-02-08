@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório de Imóveis - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Relatório de Imóveis</h2>
+        <a href="{{ url_for('relatorios.exportar', tipo='imoveis') }}" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Exportar Excel
+        </a>
+    </div>
+    <div class="card-body">
+        <!-- Filtros -->
+        <form method="POST" class="mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Bairro</label>
+                    <select name="bairro" class="form-select">
+                        <option value="">Todos</option>
+                        {% for bairro in bairros %}
+                        <option value="{{ bairro[0] }}" 
+                                {% if filtros and filtros.bairro == bairro[0] %}selected{% endif %}>
+                            {{ bairro[0] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tipo de Imóvel</label>
+                    <select name="tipo" class="form-select">
+                        <option value="">Todos</option>
+                        {% for tipo in tipos %}
+                        <option value="{{ tipo[0] }}"
+                                {% if filtros and filtros.tipo == tipo[0] %}selected{% endif %}>
+                            {{ tipo[0]|title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Área Mínima (m²)</label>
+                    <input type="number" name="area_min" class="form-control" 
+                           value="{{ filtros.area_min if filtros else '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Área Máxima (m²)</label>
+                    <input type="number" name="area_max" class="form-control"
+                           value="{{ filtros.area_max if filtros else '' }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Resumo -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5>Total de Imóveis</h5>
+                        <h3>{{ dados.total_imoveis }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5>Valor Total</h5>
+                        <h3>R$ {{ "%.2f"|format(dados.valor_total) }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5>Área Média</h5>
+                        <h3>{{ "%.2f"|format(dados.area_media) }} m²</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Distribuição por Tipo</h4>
+                        <img src="data:image/png;base64,{{ dados.grafico_tipos }}" 
+                             class="img-fluid" alt="Gráfico de tipos">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Valor Médio por Bairro</h4>
+                        <img src="data:image/png;base64,{{ dados.grafico_valores }}" 
+                             class="img-fluid" alt="Gráfico de valores">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Dados -->
+        <div class="card">
+            <div class="card-body">
+                <h4>Detalhamento</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="tabelaImoveis">
+                        <thead>
+                            <tr>
+                                <th>Inscrição</th>
+                                <th>Tipo</th>
+                                <th>Área (m²)</th>
+                                <th>Valor (R$)</th>
+                                <th>Bairro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for imovel in dados.dados_tabela %}
+                            <tr>
+                                <td>{{ imovel.inscricao }}</td>
+                                <td>{{ imovel.tipo|title }}</td>
+                                <td>{{ "%.2f"|format(imovel.area) }}</td>
+                                <td>{{ "%.2f"|format(imovel.valor) }}</td>
+                                <td>{{ imovel.bairro }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    $('#tabelaImoveis').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json'
+        },
+        pageLength: 25
+    });
+});
+</script>
+{% endblock %} 

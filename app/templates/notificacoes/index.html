@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Notificações - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Notificações</h2>
+    </div>
+    <div class="card-body">
+        {% if notificacoes %}
+        <div class="list-group">
+            {% for notificacao in notificacoes %}
+            <div class="list-group-item list-group-item-action {% if not notificacao.lida %}active{% endif %}"
+                 data-id="{{ notificacao.id }}">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ notificacao.titulo }}</h5>
+                    <small>{{ notificacao.data_criacao.strftime('%d/%m/%Y %H:%M') }}</small>
+                </div>
+                <p class="mb-1">{{ notificacao.mensagem }}</p>
+                {% if notificacao.link %}
+                <a href="{{ notificacao.link }}" class="btn btn-sm btn-primary mt-2">Ver detalhes</a>
+                {% endif %}
+                {% if not notificacao.lida %}
+                <button class="btn btn-sm btn-light mt-2 marcar-lida">Marcar como lida</button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Não há notificações para exibir.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.marcar-lida').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        const item = e.target.closest('.list-group-item');
+        const id = item.dataset.id;
+        
+        const response = await fetch(`/notificacoes/marcar-lida/${id}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            item.classList.remove('active');
+            e.target.remove();
+        }
+    });
+});
+</script>
+{% endblock %} 

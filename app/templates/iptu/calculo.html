@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Cálculo IPTU - {{ imovel.inscricao_imobiliaria }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Cálculo de IPTU - Imóvel #{{ imovel.id }}</h2>
+    
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Dados do Imóvel</h5>
+            <p><strong>Proprietário:</strong> {{ imovel.proprietario }}</p>
+            <p><strong>Endereço:</strong> {{ imovel.endereco }}</p>
+            <p><strong>Tipo:</strong> {{ imovel.tipo_imovel }}</p>
+            <p><strong>Valor Venal:</strong> R$ {{ "%.2f"|format(imovel.valor_venal) }}</p>
+            <p><strong>Valor do IPTU:</strong> R$ {{ "%.2f"|format(valor_iptu) }}</p>
+            
+            <a href="{{ url_for('iptu.gerar_boleto', imovel_id=imovel.id) }}" class="btn btn-primary">
+                Gerar Boleto
+            </a>
+            <a href="{{ url_for('iptu.index') }}" class="btn btn-secondary">
+                Voltar
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Define a data mínima como hoje
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    
+    today = yyyy + '-' + mm + '-' + dd;
+    var dataVencimento = document.getElementById('dataVencimento');
+    dataVencimento.min = today;
+    dataVencimento.value = today;
+});
+</script>
+{% endblock %} 

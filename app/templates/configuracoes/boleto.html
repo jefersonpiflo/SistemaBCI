@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações do Boleto{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-cog me-2"></i>Configurações do Boleto
+        </h6>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('configuracoes.salvar_boleto') }}" method="POST" class="needs-validation" novalidate>
+            <!-- Dados Bancários -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-university me-2"></i>Dados Bancários</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="banco" class="form-label">Banco</label>
+                            <select class="form-select" id="banco" name="banco" required>
+                                <option value="">Selecione...</option>
+                                <option value="001" {% if config and config.banco == '001' %}selected{% endif %}>
+                                    001 - Banco do Brasil
+                                </option>
+                                <option value="104" {% if config and config.banco == '104' %}selected{% endif %}>
+                                    104 - Caixa Econômica
+                                </option>
+                                <option value="341" {% if config and config.banco == '341' %}selected{% endif %}>
+                                    341 - Itaú
+                                </option>
+                                <option value="237" {% if config and config.banco == '237' %}selected{% endif %}>
+                                    237 - Bradesco
+                                </option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor, selecione o banco.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="agencia" class="form-label">Agência</label>
+                            <input type="text" class="form-control" id="agencia" name="agencia" 
+                                   value="{{ config.agencia if config else '' }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe a agência.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="conta" class="form-label">Conta</label>
+                            <input type="text" class="form-control" id="conta" name="conta" 
+                                   value="{{ config.conta if config else '' }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe a conta.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="carteira" class="form-label">Carteira</label>
+                            <input type="text" class="form-control" id="carteira" name="carteira" 
+                                   value="{{ config.carteira if config else '' }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe a carteira.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="convenio" class="form-label">Convênio</label>
+                            <input type="text" class="form-control" id="convenio" name="convenio" 
+                                   value="{{ config.convenio if config else '' }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o convênio.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="codigo_beneficiario" class="form-label">Código do Beneficiário</label>
+                            <input type="text" class="form-control" id="codigo_beneficiario" name="codigo_beneficiario" 
+                                   value="{{ config.codigo_beneficiario if config else '' }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o código do beneficiário.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="tipo_cobranca" class="form-label">Tipo de Cobrança</label>
+                            <select class="form-select" id="tipo_cobranca" name="tipo_cobranca" required>
+                                <option value="SIMPLES" {% if config and config.tipo_cobranca == 'SIMPLES' %}selected{% endif %}>
+                                    Simples
+                                </option>
+                                <option value="REGISTRADA" {% if config and config.tipo_cobranca == 'REGISTRADA' %}selected{% endif %}>
+                                    Registrada
+                                </option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Por favor, selecione o tipo de cobrança.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados do Cedente -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-building me-2"></i>Dados do Cedente</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="cedente" class="form-label">Nome do Cedente</label>
+                            <input type="text" class="form-control" id="cedente" name="cedente" 
+                                   value="{{ config.cedente if config else '' }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o nome do cedente.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="cedente_documento" class="form-label">CNPJ do Cedente</label>
+                            <input type="text" class="form-control" id="cedente_documento" name="cedente_documento" 
+                                   value="{{ config.cedente_documento if config else '' }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o CNPJ do cedente.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações do Boleto -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-file-invoice-dollar me-2"></i>Configurações do Boleto</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="local_pagamento" class="form-label">Local de Pagamento</label>
+                            <input type="text" class="form-control" id="local_pagamento" name="local_pagamento" 
+                                   value="{{ config.local_pagamento if config else '' }}" required>
+                            <div class="invalid-feedback">
+                                Por favor, informe o local de pagamento.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="instrucoes" class="form-label">Instruções</label>
+                            <textarea class="form-control" id="instrucoes" name="instrucoes" rows="4" required>{{ config.instrucoes if config else '' }}</textarea>
+                            <div class="form-text">Use quebras de linha para separar as instruções</div>
+                            <div class="invalid-feedback">
+                                Por favor, informe as instruções do boleto.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="especie" class="form-label">Espécie</label>
+                            <input type="text" class="form-control" id="especie" name="especie" 
+                                   value="{{ config.especie if config else 'R$' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="moeda" class="form-label">Moeda</label>
+                            <input type="text" class="form-control" id="moeda" name="moeda" 
+                                   value="{{ config.moeda if config else 'BRL' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Salvar Configurações
+                </button>
+                <a href="{{ url_for('iptu.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Validação do formulário
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Máscara para CNPJ
+document.getElementById('cedente_documento').addEventListener('input', function (e) {
+    var x = e.target.value.replace(/\D/g, '')
+                         .match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})/);
+    e.target.value = !x[2] ? x[1] : x[1] + '.' + x[2] + 
+                    (x[3] ? '.' + x[3] : '') + 
+                    (x[4] ? '/' + x[4] : '') +
+                    (x[5] ? '-' + x[5] : '');
+});
+</script>
+{% endblock %} 

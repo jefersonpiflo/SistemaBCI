@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - BCI{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total de Imóveis</h5>
+                <h2>{{ total_imoveis }}</h2>
+                <p class="mb-0">Imóveis cadastrados</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Valor Venal Total</h5>
+                <h2>R$ {{ "%.2f"|format(valor_total_venal) }}</h2>
+                <p class="mb-0">Patrimônio registrado</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Cadastros Recentes</h5>
+                <h2>{{ cadastros_recentes }}</h2>
+                <p class="mb-0">Últimos 30 dias</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <h5 class="card-title">Média Área Construída</h5>
+                <h2>{{ "%.2f"|format(media_area_construida) }} m²</h2>
+                <p class="mb-0">Por imóvel</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Imóveis por Tipo</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="graficoTipos"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Últimos Cadastros</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Inscrição</th>
+                                <th>Endereço</th>
+                                <th>Data Cadastro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for imovel in ultimos_cadastros %}
+                            <tr>
+                                <td>{{ imovel.inscricao_imobiliaria }}</td>
+                                <td>{{ imovel.logradouro }}, {{ imovel.numero }}</td>
+                                <td>{{ imovel.data_cadastro.strftime('%d/%m/%Y') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dados para o gráfico de tipos de imóveis
+    const dados = {
+        labels: {{ imoveis_por_tipo|map(attribute=0)|list|tojson }},
+        datasets: [{
+            data: {{ imoveis_por_tipo|map(attribute=1)|list|tojson }},
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4BC0C0'
+            ]
+        }]
+    };
+
+    // Configuração do gráfico
+    const config = {
+        type: 'pie',
+        data: dados,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    };
+
+    // Criação do gráfico
+    const graficoTipos = new Chart(
+        document.getElementById('graficoTipos'),
+        config
+    );
+</script>
+{% endblock %} 

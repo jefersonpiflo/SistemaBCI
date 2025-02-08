@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Log - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Detalhes do Log</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Informações Gerais</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="30%">Data/Hora</th>
+                        <td>{{ log.data_hora.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Usuário</th>
+                        <td>{{ log.usuario.nome }}</td>
+                    </tr>
+                    <tr>
+                        <th>Módulo</th>
+                        <td>{{ log.modulo|title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ação</th>
+                        <td>{{ log.acao|title }}</td>
+                    </tr>
+                    <tr>
+                        <th>IP</th>
+                        <td>{{ log.ip_address }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <h4>Detalhes da Alteração</h4>
+                {% if log.dados_anteriores or log.dados_novos %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Dados Anteriores</h5>
+                        <pre class="bg-light p-2">{{ log.dados_anteriores|pretty_json }}</pre>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Dados Novos</h5>
+                        <pre class="bg-light p-2">{{ log.dados_novos|pretty_json }}</pre>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if log.detalhes %}
+                <h5>Observações</h5>
+                <p>{{ log.detalhes }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

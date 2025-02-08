@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Vistorias - BCI{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>Vistorias</h2>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Data Agendada</th>
+                        <th>Imóvel</th>
+                        <th>Fiscal</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vistoria in vistorias %}
+                    <tr>
+                        <td>{{ vistoria.data_agendada.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ vistoria.imovel.inscricao_imobiliaria }}</td>
+                        <td>{{ vistoria.fiscal.nome }}</td>
+                        <td>
+                            <span class="badge {% if vistoria.status == 'realizada' %}bg-success
+                                             {% elif vistoria.status == 'agendada' %}bg-primary
+                                             {% else %}bg-danger{% endif %}">
+                                {{ vistoria.status|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('vistoria.visualizar', id=vistoria.id) }}" 
+                               class="btn btn-sm btn-info">Visualizar</a>
+                            {% if vistoria.status == 'agendada' %}
+                            <a href="{{ url_for('vistoria.realizar', id=vistoria.id) }}" 
+                               class="btn btn-sm btn-success">Realizar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 
