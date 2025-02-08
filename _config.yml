@@ -1,0 +1,22 @@
+title: Sistema BCI
+description: Sistema de Boletim de Cadastro Imobiliário
+theme: jekyll-theme-cayman
+
+# Configurações do site
+url: "https://seu-usuario.github.io/bci-sistema"
+baseurl: "/bci-sistema"
+
+# Configurações de SEO
+lang: pt-BR
+author:
+  name: Seu Nome
+  email: seu-email@exemplo.com
+
+# Configurações de navegação
+nav:
+  - title: Home
+    url: /
+  - title: API
+    url: /api
+  - title: Manual
+    url: /manual 
