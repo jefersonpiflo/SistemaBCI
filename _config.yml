@@ -1,22 +1,23 @@
 title: Sistema BCI
 description: Sistema de Boletim de Cadastro Imobiliário
-theme: jekyll-theme-cayman
+baseurl: ""
+url: ""
 
-# Configurações do site
-url: "https://seu-usuario.github.io/bci-sistema"
-baseurl: "/bci-sistema"
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
 
-# Configurações de SEO
-lang: pt-BR
-author:
-  name: Seu Nome
-  email: seu-email@exemplo.com
-
-# Configurações de navegação
-nav:
-  - title: Home
-    url: /
-  - title: API
-    url: /api
-  - title: Manual
-    url: /manual 
+# Exclude files from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .git
+  - .github
+  - README.md
+  - venv
+  - __pycache__
+  - *.pyc 
