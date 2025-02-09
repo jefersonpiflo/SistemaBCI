@@ -39,3 +39,4 @@ itsdangerous>=2.1.2
 # Desenvolvimento e debug
 pytest>=7.4.3
 coverage>=7.3.2 
+gunicorn==21.2.0
